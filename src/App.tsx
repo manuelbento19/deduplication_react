@@ -1,32 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
-import './App.css'
+import { useState } from 'react';
+import * as Schenario from './scenarios'
 
-type Post = {
-  id: number;
-  title: string;
-}
 function App() {
-  const [posts,setPosts] = useState<Post[]>([])
-  
-  const getPosts = useCallback(async() =>{
-    const response = await fetch("https://dummyjson.com/posts");
-    const result = await response.json();
-    setPosts(result.posts)
-  },[])
-
-  useEffect(()=> {
-    getPosts()
-  },[])
+  const [activeScenario,setActiveSchenario] = useState(1);
 
   return (
     <div>
       <h1>This is the posts list, trying to avoid the deduplication</h1>
-      <button onClick={getPosts}>Get More</button>
-      <ul>
-        {posts?.map(item=>(
-          <li key={item.id}>{item.title}</li>
-        ))}
+      <h3>Schenario</h3>
+      <ul style={{display: 'flex',alignItems: 'center',gap: 10}}>
+        {Array.from({length: 4}).map((_,index)=><a onClick={()=>setActiveSchenario(index+1)} href={`#scenario${index+1}`} key={index}>Scenario {index+1}</a>)}
       </ul>
+      <hr />
+      {activeScenario==1 && <Schenario.Scenario1/>}
+      {activeScenario==2 && <Schenario.Scenario2/>}
+      {activeScenario==3 && <Schenario.Scenario3/>}
+      {activeScenario==4 && <Schenario.Scenario4/>}
     </div>
   )
 }
