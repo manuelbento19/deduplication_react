@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Post } from '../../types';
 
 export const Scenario6 =  () => {
-  const fetchedRef = useRef(false);
   const [posts,setPosts] = useState<Post[]|null>(null)
 
   const getPosts = useCallback(async() =>{
@@ -11,12 +10,9 @@ export const Scenario6 =  () => {
     setPosts(result.posts)
   },[])
 
-  useEffect(()=> {
-    if(!fetchedRef.current){
-      fetchedRef.current = true;
-      getPosts()
-    }
-  },[getPosts])
+  useDeduplication(()=>{
+    getPosts()
+  },[])
 
   return (
     <div>
@@ -28,4 +24,16 @@ export const Scenario6 =  () => {
       </ul>
     </div>
   )
+}
+
+const useDeduplication = (callback: ()=> void,dependencies?: React.DependencyList) => {
+  const fetchedRef = useRef(false);
+
+  useEffect(()=>{
+    if(!fetchedRef.current){
+      fetchedRef.current = true;
+      callback()
+    }
+  },[callback,dependencies])
+
 }
